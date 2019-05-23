@@ -1,18 +1,20 @@
 var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+var VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: ['babel-polyfill', './src/main.js'], //项目入口文件，webpack 会从main.js开始，把所有依赖都加载
     devtool: '#eval-source-map',
     output: {
         path: path.resolve(__dirname, './dist'), //项目的打包文件路径
-        publicPath: '/dist/', //通过devServer访问路径
+        //publicPath: '/dist/', //通过devServer访问路径
         filename: 'build.js' //打包后的文件名
     },
     devServer: {
         historyApiFallback: true, //设置为true那么所有的路径都执行 index.html
-        overlay: true, //将错误显示在html上                                                                                                                     
+        overlay: true, //将错误显示在html上      
+        contentBase: './dist',                                                                                                               
     },
     plugins: [
         //new CleanWebpackPlugin(),
@@ -33,12 +35,13 @@ module.exports = {
         //     to: 'static',
         //     ignore: ['.*']
         //   }
-        // ])
+        // ]),
+        new VueLoaderPlugin()
     ],
     resolve: {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            // '@': resolve('src'),
+            //'@': resolve('src'),
         }
     },
     module :{
@@ -54,7 +57,8 @@ module.exports = {
                   test: /\.css$/,
                   use: [
                       'vue-style-loader',
-                      'css-loader'
+                      'css-loader',
+                    //   'file-loader'
                   ],
               },
               {
@@ -62,17 +66,22 @@ module.exports = {
                   use: [
                       'vue-style-loader',
                       'css-loader',
-                      'less-loader'
+                      'less-loader',
+                      //'style-loader'
                   ],
               },
               {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/  ,
-                options:{
-                    plugins:['syntax-dynamic-import']
-                }
-              }
+                test: /\.(ttf|eot|woff|woff2|svg)/,
+                use: ['file-loader']
+               }
+            //   {
+            //     test: /\.js$/,
+            //     loader: 'babel-loader',
+            //     exclude: /node_modules/  ,
+            //     options:{
+            //         plugins:['syntax-dynamic-import']
+            //     }
+            //   }
         ]
     }
     
